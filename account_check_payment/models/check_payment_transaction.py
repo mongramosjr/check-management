@@ -48,7 +48,7 @@ class CheckPaymentTransaction(models.Model):
     # inherit = 'check.payment.transaction.abstract' # doesnt include abstract model
     _inherit = ['mail.thread', 'check.payment.transaction.abstract']
     _description = 'Check Payment Transaction'
-    _order = 'payment_date desc, check_name desc'
+    _order = 'check_payment_date desc, check_name desc'
     
     state = fields.Selection([ ('draft', 'Draft'), 
     
