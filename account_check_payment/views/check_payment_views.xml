@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Check Payment transactions -->
+        
+        <record id="check_payment_form" model="ir.ui.view">
+            <field name="name">check.payment.transaction.form</field>
+            <field name="model">check.payment.transaction</field>
+            <field name="arch" type="xml">
+                <form string="Check Payment">
+                    <header>
+                        <!--
+                        <button type="object" name="action_capture" states="authorized" string="Capture Transaction" class="oe_highlight"/>
+                        <button type="object" name="action_void" states="authorized" string="Void Transaction"/>
+                        -->
+                        <field name="state" widget="statusbar" clickable="True"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="check_name"/>
+                                <field name="check_number"/>
+                                <field name="check_payment_date"/>
+                                <label for="amount"/>
+                                <div class="o_row">
+                                    <field name="amount"/>
+                                    <field name="currency_id" options="{'no_open': True, 'no_create': True}"/>
+                                </div>
+                                
+                            </group>
+                            <group>
+                                <field name="check_issue_date"/>
+                                <field name="bank_account_id"/>
+                                <field name="journal_id" widget="selection" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                
+                                <label for="partner_id"/>
+                                <div>
+                                    <field name="partner_id" context="{'show_address': 1}" options="{'always_reload': True}"/>
+                                </div>
+                                <field name="company_id" invisible="1"/>
+                                <field name="journal_id" invisible="1"/>
+                                
+                                <field name="state" invisible="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        
+        <record id="check_payment_kanban" model="ir.ui.view">
+            <field name="name">check.payment.transaction.kanban</field>
+            <field name="model">check.payment.transaction</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_content oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <strong><field name="check_name"/></strong>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <span class="pull-right"><field name="check_number"/></span>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <span><field name="check_payment_date"/></span>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <span class="pull-right">
+                                            <field name="amount" widget="monetary"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        
+        <record id="check_payment_search" model="ir.ui.view">
+            <field name="name">check.payment.transaction.search</field>
+            <field name="model">check.payment.transaction</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="partner_id"/>
+                    <field name="check_name"/>
+                    <field name="check_number"/>
+                    <field name="check_issue_date"/>
+                    <field name="check_payment_date"/>
+                </search>
+            </field>
+        </record>
+        
+        <record id="check_payment_list" model="ir.ui.view">
+            <field name="name">check.payment.list</field>
+            <field name="model">check.payment.transaction</field>
+            <field name="arch" type="xml">
+                <tree string="Check Payments">
+                    <field name="check_name"/>
+                    <field name="check_number"/>
+                    <field name="check_payment_date"/>
+                    <field name="amount"/>
+                    <field name="check_issue_date"/>
+                    <field name="bank_account_id"/>
+                    
+                    <field name="partner_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="journal_id" invisible="1"/>
+                    
+                    <field name="state" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        
+    </data>
+</odoo>
