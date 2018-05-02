@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <odoo>
     <data>
-        
+
         <record id="view_account_payment_form_inherit_payment_check" model="ir.ui.view">
             <field name="name">view.account.payment.form.inherit.payment.check</field>
             <field name="model">account.payment</field>
@@ -14,21 +14,21 @@
                             <field name="check_payment_transaction_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
                                 context="{'default_amount': amount, 'default_currency_id': currency_id, 'default_partner_id': partner_id, 'default_journal_id': journal_id}">
                                 <tree string="Check Information" editable="bottom">
-                                    
+
                                     <field name="check_name"/>
                                     <field name="check_number"/>
                                     <field name="check_payment_date"/>
                                     <field name="amount"/>
                                     <field name="check_issue_date"/>
-                                    <field name="bank_account_id"/>
-                                    
+                                    <field name="bank_id" options="{'no_open': True, 'no_create': True}"/>
+
                                     <field name="partner_id" invisible="1"/>
-                                    <field name="currency_id" invisible="1"/>
-                                    <field name="company_id" invisible="1"/>
+                                    <field name="currency_id" options="{'no_open': True, 'no_create': True}"  groups="base.group_multi_currency"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
                                     <field name="journal_id" invisible="1"/>
-                                    
+
                                     <field name="state" invisible="1" />
-                                    
+
                                 </tree>
                             </field>
                         </page>
@@ -36,7 +36,7 @@
                 </xpath>
             </field>
         </record>
-        
+
         <record id="view_account_payment_invoice_form_inherited_check" model="ir.ui.view">
             <field name="name">account.payment.invoice.form.inherited.check</field>
             <field name="model">account.payment</field>
@@ -49,21 +49,21 @@
                             <field name="check_payment_transaction_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
                                 context="{'default_amount': amount, 'default_currency_id': currency_id, 'default_partner_id': partner_id, 'default_journal_id': journal_id}">
                                 <tree string="Check Information" editable="bottom">
-                                    
+
                                     <field name="check_name"/>
                                     <field name="check_number"/>
                                     <field name="check_payment_date"/>
                                     <field name="amount"/>
                                     <field name="check_issue_date"/>
-                                    <field name="bank_account_id"/>
-                                    
+                                    <field name="bank_id" options="{'no_open': True, 'no_create': True}"/>
+
                                     <field name="partner_id" invisible="1"/>
-                                    <field name="currency_id" invisible="1"/>
-                                    <field name="company_id" invisible="1"/>
+                                    <field name="currency_id" options="{'no_open': True, 'no_create': True}"  groups="base.group_multi_currency"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
                                     <field name="journal_id" invisible="1"/>
-                                    
+
                                     <field name="state" invisible="1"/>
-                                    
+
                                 </tree>
                             </field>
                         </page>
@@ -71,13 +71,13 @@
                 </xpath>
             </field>
         </record>
-        
-        
-        
-        
-        
-        
-       
+
+
+
+
+
+
+
         <!-- Register payment from several invoices/bills -->
         <!--
         <record id="view_account_register_payments_form_inherit_check_payment" model="ir.ui.view">
@@ -85,38 +85,38 @@
             <field name="model">account.register.payments</field>
             <field name="inherit_id" ref="account.view_account_payment_from_invoices"/>
             <field name="arch" type="xml">
-                
+
                 <xpath expr="//field[@name='amount']" position="before">
                         <field name="check_payment_transaction_ids" widget="many2onebutton" context="{'default_amount': amount, 'default_currency_id': currency_id, 'default_partner_id': partner_id, 'default_journal_id': journal_id}"/>
                 </xpath>
-                
+
                 <xpath expr="//form/footer" position="before">
                     <notebook colspan="4">
                         <page string="Check Information">
                             <field name="check_payment_transaction_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
                                 context="{'default_amount': amount, 'default_currency_id': currency_id, 'default_partner_id': partner_id, 'default_journal_id': journal_id}">
                                 <tree string="Check Information" editable="bottom">
-                                    
+
                                     <field name="check_name"/>
                                     <field name="check_number"/>
                                     <field name="check_payment_date"/>
                                     <field name="amount"/>
                                     <field name="check_issue_date"/>
-                                    <field name="bank_account_id"/>
-                                    
+                                    <field name="bank_id" options="{'no_open': True, 'no_create': True}"/>
+
                                     <field name="partner_id" invisible="1"/>
-                                    <field name="currency_id" invisible="1"/>
-                                    <field name="company_id" invisible="1"/>
+                                    <field name="currency_id" options="{'no_open': True, 'no_create': True}"  groups="base.group_multi_currency"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
                                     <field name="journal_id" invisible="1"/>
-                                    
+
                                     <field name="state" invisible="1"/>
-                                    
+
                                 </tree>
                             </field>
                         </page>
                     </notebook>
                 </xpath>
-                
+
             </field>
         </record>
         -->

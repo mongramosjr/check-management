@@ -26,16 +26,16 @@ from odoo.exceptions import ValidationError
 
 class AccountRegisterPayments(models.TransientModel):
     _inherit = "account.register.payments"
-    
+
     check_payment_transaction_ids = fields.One2many('check.payment.transaction', 'account_payment_id', string="Check Information",
         readonly=True, states={'draft': [('readonly', False)]}, copy=False)
-    
+
 class AccountPayment(models.Model):
     _inherit = 'account.payment'
-    
+
     hide_check_payment = fields.Boolean(compute='_compute_hide_check_payment',
         help="Technical field used to hide the check_payment if the selected journal has not been set or the selected journal has a type neither in in bank nor cash")
-        
+
     check_payment_transaction_ids = fields.One2many('check.payment.transaction', 'account_payment_id', string="Check Information",
         readonly=True, states={'draft': [('readonly', False)]}, copy=False)
 
