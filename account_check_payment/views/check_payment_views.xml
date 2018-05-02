@@ -36,6 +36,7 @@
                     <field name="amount" sum="Amount"/>
                     <field name="check_issue_date"/>
                     <field name="bank_id" options="{'no_open': True, 'no_create': True}" />
+                    <field name="partner_id" string="Customer"/>
                     <field name="currency_id" options="{'no_open': True, 'no_create': True}" groups="base.group_multi_currency"/>
                     <field name="company_id" groups="base.group_multi_company"/>
                     <field name="state"/>
@@ -107,10 +108,13 @@
             <field name="arch" type="xml">
                 <form string="Check Payment">
                     <header>
-                        <!--
-                        <button type="object" name="action_capture" states="authorized" string="Capture Transaction" class="oe_highlight"/>
-                        <button type="object" name="action_void" states="authorized" string="Void Transaction"/>
-                        -->
+
+                        <button type="object" name="action_receive" states="draft" string="Validate" class="oe_highlight"/>
+                        <button type="object" name="action_deposit" states="received" string="Deposited to Bank" class="oe_highlight"/>
+                        <button type="object" name="action_fund_credited" states="deposited" string="Done" class="oe_highlight"/>
+                        <button type="object" name="action_return_received_check" states="received,deposited" string="Returned Checks"/>
+                        <button type="object" name="action_cancel" states="draft" string="Cancel"/>
+
                         <field name="state" widget="statusbar" statusbar_visible="draft,received,deposited,returned,posted,cancelled"/>
                     </header>
                     <sheet>
@@ -151,10 +155,10 @@
             <field name="arch" type="xml">
                 <form string="Check Payment">
                     <header>
-                        <!--
-                        <button type="object" name="action_capture" states="authorized" string="Capture Transaction" class="oe_highlight"/>
-                        <button type="object" name="action_void" states="authorized" string="Void Transaction"/>
-                        -->
+                        <button type="object" name="action_issue" states="draft" string="Validate" class="oe_highlight"/>
+                        <button type="object" name="action_fund_debited" states="issued" string="Done" class="oe_highlight"/>
+                        <button type="object" name="action_return_issued_check" states="issued" string="Returned Check"/>
+                        <button type="object" name="action_cancel" states="draft" string="Cancel"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,issued,returned,posted,cancelled"/>
                     </header>
                     <sheet>
@@ -168,6 +172,7 @@
                                     <field name="amount"/>
                                     <field name="currency_id" options="{'no_open': True, 'no_create': True}" groups="base.group_multi_currency"/>
                                 </div>
+                                <field name="account_payment_id" domain="[('payment_type','=','outbound')]"  />
 
                             </group>
                             <group>
@@ -275,8 +280,12 @@
             <field name="view_mode">tree,kanban,form,graph</field>
             <field name="context">{'default_payment_type': 'outbound'}</field>
             <field name="domain">[('payment_type', '=', 'outbound')]</field>
-            <field name="view_id" ref="check_payment_vendor_list"/>
-            <field name="form_view_id" ref="check_payment_form_statusbar_vendor"/>
+            <field name="view_ids"
+                 eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('check_payment_vendor_list')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('check_payment_form_statusbar_vendor')}),
+                (0, 0, {'view_mode': 'kanban'}),
+                (0, 0, {'view_mode': 'graph'})]"/>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                   Click to issue check to a payment document

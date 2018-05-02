@@ -67,9 +67,9 @@ class CheckPaymentTransaction(models.Model):
 
     name = fields.Char(readonly=True, copy=False, default="Draft Check Payment");
     check_name = fields.Char('Name', readonly=True, required=True, copy=False, states={'draft': [('readonly', False)]},)
-    check_number = fields.Char('Number', readonly=True, size=34, required=True, states={'draft': [('readonly', False)]}, copy=False)
+    check_number = fields.Char('Number', readonly=True, size=34, required=True, copy=False, states={'draft': [('readonly', False)]})
     check_issue_date = fields.Date('Issue Date', readonly=True, copy=False, states={'draft': [('readonly', False)]}, default=fields.Date.context_today)
-    check_payment_date = fields.Date('Payment Date', readonly=True, required=True, help="Only if this check is post dated", states={'draft': [('readonly', False)]})
+    check_payment_date = fields.Date('Payment Date', readonly=True, required=True, copy=False, help="Only if this check is post dated", states={'draft': [('readonly', False)]})
 
     bank_id = fields.Many2one('res.bank', string="Bank Name", ondelete='restrict', copy=False)
 
@@ -90,31 +90,80 @@ class CheckPaymentTransaction(models.Model):
 #            rec['amount'] = invoice['residual']
         return rec
 
+
     @api.multi
-    def received_check(self):
+    def action_receive(self):
         for rec in self:
             if rec.state != 'draft':
-                raise UserError(_("Only a draft check can be received."))
+                raise UserError(_("Only a check with status draft can be received."))
 
-
+            rec.name = rec.check_name + ' ' + rec.check_number
             rec.write({'state': 'received'})
 
 
     @api.multi
-    def received_check(self):
+    def action_deposit(self):
         for rec in self:
-            if rec.state != 'draft':
-                raise UserError(_("Only a draft check can be received."))
+            if rec.state != 'received':
+                raise UserError(_("Only a validated check can be deposited."))
 
 
-            rec.write({'state': 'received'})
+            rec.write({'state': 'deposited'})
 
     @api.multi
-    def post(self):
+    def action_fund_credited(self):
         for rec in self:
-            if rec.state != 'deposited' or rec.state != 'issued':
-                raise UserError(_("Only a deposited or issued check can be posted."))
+            if rec.state != 'deposited':
+                raise UserError(_("Only a check already deposited to bank can be posted."))
 
 
             rec.write({'state': 'posted'})
+
+
+    @api.multi
+    def action_return_received_check(self):
+        for rec in self:
+            if rec.state != 'deposited':
+                raise UserError(_("Only a check already deposited to bank can be returned."))
+
+
+            rec.write({'state': 'returned'})
+
+    @api.multi
+    def action_cancel(self):
+        for rec in self:
+            if rec.state != 'draft':
+                raise UserError(_("You cannot cancel check at this time."))
+
+
+            rec.write({'state': 'cancelled'})
+
+
+
+    @api.multi
+    def action_issue(self):
+        for rec in self:
+            if rec.state != 'draft':
+                raise UserError(_("Only a check with status draft can be issued."))
+
+            rec.name = rec.check_name + ' ' + rec.check_number
+            rec.write({'state': 'issued'})
+
+    @api.multi
+    def action_fund_debited(self):
+        for rec in self:
+            if rec.state != 'issued':
+                raise UserError(_("Only a issued check can be posted."))
+
+            rec.write({'state': 'posted'})
+
+
+    @api.multi
+    def action_return_issued_check(self):
+        for rec in self:
+            if rec.state != 'issued':
+                raise UserError(_("Only a issued check can be returned."))
+
+            rec.write({'state': 'returned'})
+
 
