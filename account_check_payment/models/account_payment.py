@@ -39,15 +39,31 @@ class AccountPayment(models.Model):
     check_payment_transaction_ids = fields.One2many('check.payment.transaction', 'account_payment_id', string="Check Information",
         readonly=True, states={'draft': [('readonly', False)]}, copy=False)
 
+    @api.onchange('payment_type')
+    def _onchange_payment_type(self):
+        res = super(AccountPayment, self)._onchange_amount()
+        if self.payment_type == 'transfer':
+            self.hide_check_payment = True
+        elif self.payment_type == 'outbound' or self.payment_type == 'inbound':
+            if self.journal_id.type == 'bank' or self.journal_id.type == 'cash':
+                self.hide_check_payment = False
+            else:
+                self.hide_check_payment = True
+        res['domain']['payment_type'] = self.payment_type
+        return res
 
     @api.multi
     @api.depends('journal_id')
     def _compute_hide_check_payment(self):
         for payment in self:
+            if payment.payment_type == 'transfer':
+                payment.hide_check_payment = True
+                continue
             if not payment.journal_id:
                 payment.hide_check_payment = True
                 continue
-            if payment.journal_id.type == 'bank' or payment.journal_id.type == 'cash':
-                payment.hide_check_payment = False
-            else:
-                payment.hide_check_payment = True
+            if payment.payment_type == 'outbound' or payment.payment_type == 'inbound':
+                if payment.journal_id.type == 'bank' or payment.journal_id.type == 'cash':
+                    payment.hide_check_payment = False
+                else:
+                    payment.hide_check_payment = True

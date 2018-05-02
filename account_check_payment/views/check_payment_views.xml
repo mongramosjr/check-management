@@ -21,6 +21,7 @@
                     <field name="journal_id" invisible="1"/>
 
                     <field name="state" invisible="1"/>
+                    <field name="payment_type" invisible="1"/>
                 </tree>
             </field>
         </record>
@@ -95,6 +96,7 @@
                                 <field name="journal_id" invisible="1"/>
 
                                 <field name="state" invisible="1"/>
+                                <field name="payment_type" invisible="1"/>
                             </group>
                         </group>
                     </sheet>
@@ -142,6 +144,7 @@
                                 </div>
                                 <field name="company_id" groups="base.group_multi_company"/>
                                 <field name="journal_id" invisible="1"/>
+                                <field name="payment_type" invisible="1"/>
                             </group>
                         </group>
                     </sheet>
@@ -186,6 +189,7 @@
                                 </div>
                                 <field name="company_id" groups="base.group_multi_company"/>
                                 <field name="journal_id" invisible="1"/>
+                                <field name="payment_type" invisible="1"/>
                             </group>
                         </group>
                     </sheet>
@@ -206,9 +210,13 @@
                                     <div class="col-xs-6">
                                         <strong><field name="check_name"/></strong>
                                     </div>
-                                    <div class="col-xs-6">
-                                        <span class="pull-right"><field name="check_number"/></span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <span><field name="check_number"/></span>
                                     </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-xs-6">
                                         <span><field name="check_payment_date"/></span>
                                     </div>
@@ -244,7 +252,7 @@
             <field name="model">check.payment.transaction</field>
             <field name="arch" type="xml">
                 <graph string="Payments" type="bar" stacked="1">
-                    <field name="payment_type"/>
+                    <field name="partner_id"/>
                     <field name="journal_id"/>
                     <field name="amount" type="measure"/>
                 </graph>

@@ -71,11 +71,14 @@ class CheckPaymentTransaction(models.Model):
     check_issue_date = fields.Date('Issue Date', readonly=True, copy=False, states={'draft': [('readonly', False)]}, default=fields.Date.context_today)
     check_payment_date = fields.Date('Payment Date', readonly=True, required=True, copy=False, help="Only if this check is post dated", states={'draft': [('readonly', False)]})
 
+    amount = fields.Monetary(string='Amount', readonly=True, required=True, states={'draft': [('readonly', False)]})
+
     bank_id = fields.Many2one('res.bank', string="Bank Name", ondelete='restrict', copy=False)
 
-    account_payment_id = fields.Many2one('account.payment', string='Payment Reference', ondelete='cascade', index=True)
+    account_payment_id = fields.Many2one('account.payment', readonly=True, string='Payment Reference', ondelete='cascade', index=True, states={'draft': [('readonly', False)]})
 
-    payment_type = fields.Selection(related='account_payment_id.payment_type', readonly=True, store=True)
+    payment_type = fields.Selection(compute='_compute_payment_type',
+        selection= [('outbound', 'Send Money'), ('inbound', 'Receive Money')], readonly=True, store=True, states={'draft': [('readonly', False)]})
 
     @api.model
     def default_get(self, fields):
@@ -90,6 +93,13 @@ class CheckPaymentTransaction(models.Model):
 #            rec['amount'] = invoice['residual']
         return rec
 
+    @api.multi
+    def _compute_payment_type(self):
+        for rec in self:
+            if rec.account_payment_id:
+                rec.payment_type = rec.account_payment_id.payment_type
+            else:
+                rec.payment_type = 'inbound'
 
     @api.multi
     def action_receive(self):
