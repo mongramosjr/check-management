@@ -67,7 +67,7 @@ class CheckPaymentTransaction(models.Model):
 
     name = fields.Char(readonly=True, copy=False, default="Draft Check Payment");
     check_name = fields.Char('Name', readonly=True, required=True, copy=False, states={'draft': [('readonly', False)]},)
-    check_number = fields.Integer('Number', readonly=True, required=True, states={'draft': [('readonly', False)]}, copy=False)
+    check_number = fields.Char('Number', readonly=True, size=34, required=True, states={'draft': [('readonly', False)]}, copy=False)
     check_issue_date = fields.Date('Issue Date', readonly=True, copy=False, states={'draft': [('readonly', False)]}, default=fields.Date.context_today)
     check_payment_date = fields.Date('Payment Date', readonly=True, required=True, help="Only if this check is post dated", states={'draft': [('readonly', False)]})
 
