@@ -21,8 +21,8 @@
 ##############################################################################
 import datetime
 
-from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from openerp import models, fields, api, _
+from openerp.exceptions import UserError, ValidationError
 
 class CheckPaymentTransactionAbstract(models.AbstractModel):
     _name = "check.payment.transaction.abstract"
@@ -34,7 +34,7 @@ class CheckPaymentTransactionAbstract(models.AbstractModel):
     amount = fields.Monetary(string='Amount', required=True)
     currency_id = fields.Many2one('res.currency', string='Currency', required=True, default=lambda self: self.env.user.company_id.currency_id)
     posted_date = fields.Date(string='Payment Date', required=False, copy=False)
-    journal_id = fields.Many2one('account.journal', string='Journal', required=True, domain=[('type', 'in', ('bank', 'cash'))])
+    journal_id = fields.Many2one('account.journal', string='Journal', required=True, domain=[('type', '=', 'bank')])
     company_id = fields.Many2one('res.company', related='journal_id.company_id', string='Company', readonly=True)
 
     @api.one

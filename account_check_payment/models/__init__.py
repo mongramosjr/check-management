@@ -20,5 +20,5 @@
 #   limitations under the License.
 ##############################################################################
 
-from . import check_payment_transaction
-from . import account_payment
+import check_payment_transaction
+import account_payment

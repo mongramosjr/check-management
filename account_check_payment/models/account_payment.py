@@ -21,15 +21,15 @@
 ##############################################################################
 import datetime
 
-from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from openerp import models, fields, api, _
+from openerp.exceptions import UserError, ValidationError
 
 class AccountRegisterPayments(models.TransientModel):
     _inherit = "account.register.payments"
 
     check_payment_transaction_ids = fields.One2many('check.payment.transaction', 'account_payment_id', string="Check Information",
         readonly=True, states={'draft': [('readonly', False)]}, copy=False)
-
+        
 class AccountPayment(models.Model):
     _inherit = 'account.payment'
 
@@ -41,16 +41,26 @@ class AccountPayment(models.Model):
 
     @api.onchange('payment_type')
     def _onchange_payment_type(self):
-        res = super(AccountPayment, self)._onchange_amount()
+        res = super(AccountPayment, self)._onchange_payment_type()
         if self.payment_type == 'transfer':
             self.hide_check_payment = True
         elif self.payment_type == 'outbound' or self.payment_type == 'inbound':
-            if self.journal_id.type == 'bank' or self.journal_id.type == 'cash':
+            if self.journal_id.type == 'bank':
                 self.hide_check_payment = False
             else:
                 self.hide_check_payment = True
         res['domain']['payment_type'] = self.payment_type
         return res
+        
+    @api.onchange('journal_id')
+    def _onchange_journal(self):
+        res = super(AccountPayment, self)._onchange_journal()
+        if self.journal_id:
+            if self.check_payment_transaction_ids:
+                for rec in self.check_payment_transaction_ids:
+                    rec.journal_id = self.journal_id
+        return res
+            
 
     @api.multi
     @api.depends('journal_id')
@@ -63,7 +73,7 @@ class AccountPayment(models.Model):
                 payment.hide_check_payment = True
                 continue
             if payment.payment_type == 'outbound' or payment.payment_type == 'inbound':
-                if payment.journal_id.type == 'bank' or payment.journal_id.type == 'cash':
+                if payment.journal_id.type == 'bank':
                     payment.hide_check_payment = False
                 else:
                     payment.hide_check_payment = True

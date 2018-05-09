@@ -143,7 +143,6 @@
                                     <field name="partner_id" context="{'show_address': 1}" options="{'always_reload': True}"/>
                                 </div>
                                 <field name="company_id" groups="base.group_multi_company"/>
-                                <field name="journal_id" invisible="1"/>
                                 <field name="payment_type" invisible="1"/>
                             </group>
                         </group>
@@ -188,7 +187,6 @@
                                     <field name="partner_id" context="{'show_address': 1}" options="{'always_reload': True}"/>
                                 </div>
                                 <field name="company_id" groups="base.group_multi_company"/>
-                                <field name="journal_id" invisible="1"/>
                                 <field name="payment_type" invisible="1"/>
                             </group>
                         </group>
@@ -303,8 +301,8 @@
             </field>
         </record>
 
-        <menuitem action="action_check_payments_receivable" id="menu_action_check_payments_receivable" parent="account.menu_finance_receivables_documents" sequence="200"/>
-        <menuitem action="action_check_payments_payable" id="menu_action_check_payments_payable" parent="account.menu_finance_payables_documents" sequence="200"/>
+        <menuitem action="action_check_payments_receivable" id="menu_action_check_payments_receivable" parent="account.menu_finance_receivables" sequence="200"/>
+        <menuitem action="action_check_payments_payable" id="menu_action_check_payments_payable" parent="account.menu_finance_payables" sequence="200"/>
 
 
     </data>

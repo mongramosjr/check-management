@@ -27,7 +27,7 @@
     'description': """Check Payment""",
     'author': 'Mong Ramos Jr. <mongramosjr@gmail.com>',
     'website': 'https://www.basement720.com/',
-    'depends': ['account_payment'],
+    'depends': ['account'],
     'data': [
         'security/account_check_payment_security.xml',
         'security/ir.model.access.csv',
