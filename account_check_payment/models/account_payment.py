@@ -49,7 +49,7 @@ class AccountPayment(models.Model):
                 self.hide_check_payment = False
             else:
                 self.hide_check_payment = True
-        res['domain']['payment_type'] = self.payment_type
+        #res['domain']['payment_type'] = self.payment_type
         return res
         
     @api.onchange('journal_id')
