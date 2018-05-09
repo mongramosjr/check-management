@@ -41,7 +41,7 @@ class AccountPayment(models.Model):
 
     @api.onchange('payment_type')
     def _onchange_payment_type(self):
-        res = super(AccountPayment, self)._onchange_amount()
+        res = super(AccountPayment, self)._onchange_payment_type()
         if self.payment_type == 'transfer':
             self.hide_check_payment = True
         elif self.payment_type == 'outbound' or self.payment_type == 'inbound':
@@ -50,6 +50,15 @@ class AccountPayment(models.Model):
             else:
                 self.hide_check_payment = True
         res['domain']['payment_type'] = self.payment_type
+        return res
+        
+    @api.onchange('journal_id')
+    def _onchange_journal(self):
+        res = super(AccountPayment, self)._onchange_journal()
+        if self.journal_id:
+            if self.check_payment_transaction_ids:
+                for rec in self.check_payment_transaction_ids:
+                    rec.journal_id = self.journal_id
         return res
 
     @api.multi

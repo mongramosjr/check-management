@@ -143,7 +143,6 @@
                                     <field name="partner_id" context="{'show_address': 1}" options="{'always_reload': True}"/>
                                 </div>
                                 <field name="company_id" groups="base.group_multi_company"/>
-                                <field name="journal_id" invisible="1"/>
                                 <field name="payment_type" invisible="1"/>
                             </group>
                         </group>
@@ -188,7 +187,6 @@
                                     <field name="partner_id" context="{'show_address': 1}" options="{'always_reload': True}"/>
                                 </div>
                                 <field name="company_id" groups="base.group_multi_company"/>
-                                <field name="journal_id" invisible="1"/>
                                 <field name="payment_type" invisible="1"/>
                             </group>
                         </group>
