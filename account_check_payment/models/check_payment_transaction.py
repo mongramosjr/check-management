@@ -75,8 +75,6 @@ class CheckPaymentTransaction(models.Model):
 
     bank_id = fields.Many2one('res.bank', string="Bank Name", ondelete='restrict', copy=False)
 
-    account_payment_id = fields.Many2one('account.payment', readonly=True, string='Payment Reference', ondelete='cascade', index=True, states={'draft': [('readonly', False)]})
-
     payment_type = fields.Selection(compute='_compute_payment_type',
         selection= [('outbound', 'Send Money'), ('inbound', 'Receive Money')], readonly=True, store=True, states={'draft': [('readonly', False)]})
 
@@ -96,11 +94,9 @@ class CheckPaymentTransaction(models.Model):
     @api.multi
     def _compute_payment_type(self):
         for rec in self:
-            if rec.account_payment_id:
-                rec.payment_type = rec.account_payment_id.payment_type
-            else:
+            if not rec.payment_type:
                 rec.payment_type = 'inbound'
-
+        
     @api.multi
     def action_receive(self):
         for rec in self:

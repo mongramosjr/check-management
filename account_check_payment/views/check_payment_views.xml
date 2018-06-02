@@ -129,7 +129,7 @@
                                     <field name="amount"/>
                                     <field name="currency_id" options="{'no_open': True, 'no_create': True}" groups="base.group_multi_currency"/>
                                 </div>
-                                <field name="account_payment_id" domain="[('payment_type','=','inbound')]"  />
+                                <!--<field name="account_payment_id" domain="[('payment_type','=','inbound')]"  />-->
 
                             </group>
                             <group>
@@ -173,7 +173,7 @@
                                     <field name="amount"/>
                                     <field name="currency_id" options="{'no_open': True, 'no_create': True}" groups="base.group_multi_currency"/>
                                 </div>
-                                <field name="account_payment_id" domain="[('payment_type','=','outbound')]"  />
+                                <!--<field name="account_payment_id" domain="[('payment_type','=','outbound')]"  />-->
 
                             </group>
                             <group>

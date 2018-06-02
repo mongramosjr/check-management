@@ -19,7 +19,25 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 ##############################################################################
+import datetime
 
-import check_payment_transaction
-import account_payment
-import check_payment_transaction_payment
+from openerp import models, fields, api, _
+from openerp.exceptions import UserError, ValidationError
+
+class CheckPaymentTransaction(models.Model):
+    
+    _name = 'check.payment.transaction.payment'
+    _description = 'Check Payment'
+    _inherits = {'check.payment.transaction': 'check_payment_transaction_id'}
+
+
+    check_payment_transaction_id = fields.Many2one('check.payment.transaction', required=True, string='Payment Reference', ondelete='cascade')
+    account_payment_id = fields.Many2one('account.payment', readonly=True, string='Payment Reference', ondelete='cascade', index=True, states={'draft': [('readonly', False)]})
+
+    @api.multi
+    def _compute_payment_type(self):
+        for rec in self:
+            if rec.account_payment_id:
+                rec.payment_type = rec.account_payment_id.payment_type
+            else:
+                rec.payment_type = 'inbound'
