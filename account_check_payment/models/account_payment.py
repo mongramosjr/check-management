@@ -39,6 +39,41 @@ class AccountPayment(models.Model):
     check_payment_transaction_ids = fields.One2many('check.payment.transaction.payment', 'account_payment_id', string="Check Information",
         readonly=True, states={'draft': [('readonly', False)]}, copy=False)
 
+    @api.multi
+    def write(self, vals):
+        
+        for rec in self:
+            if 'journal_id' in vals:
+                for check_payment in rec.check_payment_transaction_ids:
+                    check_payment.journal_id = vals['journal_id']
+            if 'partner_id' in vals:
+                for check_payment in rec.check_payment_transaction_ids:
+                    check_payment.partner_id = vals['partner_id']
+            if 'currency_id' in vals:
+                for check_payment in rec.check_payment_transaction_ids:
+                    check_payment.currency_id = vals['currency_id']
+            if 'payment_type' in vals:
+                for check_payment in rec.check_payment_transaction_ids:
+                    if vals['payment_type'] == 'inbound':
+                        check_payment.payment_type = 'inbound'
+                    elif vals['payment_type'] == 'outbound':
+                        check_payment.payment_type = 'outbound'
+        res = super(AccountPayment, self).write(vals)
+        
+        return res
+
+    @api.multi
+    def post(self):
+        res = super(AccountPayment, self).post()
+        for rec in self:
+            for check_payment in rec.check_payment_transaction_ids:
+                if check_payment.state == 'draft':
+                    if rec.payment_type == 'inbound':
+                        check_payment.action_receive()
+                    if rec.payment_type == 'outbound':
+                        check_payment.action_issue()
+                    
+        
     @api.onchange('payment_type')
     def _onchange_payment_type(self):
         res = super(AccountPayment, self)._onchange_payment_type()

@@ -25,10 +25,9 @@
                                 <field name="check_issue_date"/>
                                 <field name="bank_id" options="{'no_open': True, 'no_create': True}"/>
 
-                                <field name="partner_id" invisible="1"/>
+                                <field name="partner_id"  options="{'no_open': True, 'no_create': True}" invisible="1"/>
                                 <field name="currency_id" options="{'no_open': True, 'no_create': True}"  groups="base.group_multi_currency"/>
-                                <field name="company_id" groups="base.group_multi_company"/>
-                                <field name="journal_id" widget="selection" invisible="1"/>
+                                <field name="journal_id"  options="{'no_open': True, 'no_create': True}" widget="selection" invisible="1"/>
 
                                 <field name="state" invisible="1"/>
                                 <field name="payment_type" invisible="1"/>
@@ -62,10 +61,9 @@
                                 <field name="check_issue_date"/>
                                 <field name="bank_id" options="{'no_open': True, 'no_create': True}"/>
 
-                                <field name="partner_id" invisible="1"/>
+                                <field name="partner_id"  options="{'no_open': True, 'no_create': True}" invisible="1"/>
                                 <field name="currency_id" options="{'no_open': True, 'no_create': True}"  groups="base.group_multi_currency"/>
-                                <field name="company_id" groups="base.group_multi_company"/>
-                                <field name="journal_id" widget="selection" invisible="1"/>
+                                <field name="journal_id"  options="{'no_open': True, 'no_create': True}" widget="selection" invisible="1"/>
 
                                 <field name="state" invisible="1"/>
                                 <field name="payment_type" invisible="1"/>

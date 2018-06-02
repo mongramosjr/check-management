@@ -24,7 +24,7 @@ import datetime
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
-class CheckPaymentTransaction(models.Model):
+class CheckPaymentTransactionPayment(models.Model):
 
     _name = 'check.payment.transaction.payment'
     _description = 'Check Payment'
@@ -44,3 +44,38 @@ class CheckPaymentTransaction(models.Model):
                     rec.payment_type = rec.account_payment_id.payment_type
             else:
                 rec.payment_type = 'inbound'
+
+    @api.model
+    def create(self, vals):
+        
+        if vals.get('account_payment_id', False):
+            account_payment = self.env['account.payment'].browse(vals['account_payment_id'])
+            vals['journal_id'] = account_payment.journal_id.id
+            vals['partner_id'] = account_payment.partner_id.id
+            vals['currency_id'] = account_payment.currency_id.id
+            if account_payment.payment_type == 'inbound':
+                vals['payment_type'] = 'inbound'
+            elif account_payment.payment_type == 'outbound':
+                vals['payment_type'] = 'outbound'
+        
+        res = super(CheckPaymentTransactionPayment, self).create(vals)
+        
+        return res
+
+    @api.multi
+    def action_receive(self):
+        for rec in self:
+            if rec.state != 'draft':
+                raise UserError(_("Only a check with status draft can be received."))
+
+            rec.name = rec.check_name + ' ' + rec.check_number
+            rec.write({'state': 'received'})
+
+    @api.multi
+    def action_issue(self):
+        for rec in self:
+            if rec.state != 'draft':
+                raise UserError(_("Only a check with status draft can be issued."))
+
+            rec.name = rec.check_name + ' ' + rec.check_number
+            rec.write({'state': 'issued'})

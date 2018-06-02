@@ -28,6 +28,41 @@ class AccountVoucher(models.Model):
     check_payment_transaction_ids = fields.One2many('check.payment.transaction.voucher', 'account_voucher_id', string="Check Information",
         readonly=True, states={'draft': [('readonly', False)]}, copy=False)
 
+    @api.multi
+    def write(self, vals):
+        
+        for rec in self:
+            if 'journal_id' in vals:
+                for check_payment in rec.check_payment_transaction_ids:
+                    check_payment.journal_id = vals['journal_id']
+            if 'partner_id' in vals:
+                for check_payment in rec.check_payment_transaction_ids:
+                    check_payment.partner_id = vals['partner_id']
+            if 'currency_id' in vals:
+                for check_payment in rec.check_payment_transaction_ids:
+                    check_payment.currency_id = vals['currency_id']
+            if 'voucher_type' in vals:
+                for check_payment in rec.check_payment_transaction_ids:
+                    if vals['voucher_type'] == 'sale':
+                        check_payment.payment_type = 'inbound'
+                    elif vals['voucher_type'] == 'purchase':
+                        check_payment.payment_type = 'outbound'
+        res = super(AccountVoucher, self).write(vals)
+        
+        return res
+        
+    @api.multi
+    def action_move_line_create(self):
+        res = super(AccountVoucher, self).action_move_line_create()
+        for rec in self:
+            for check_payment in rec.check_payment_transaction_ids:
+                if check_payment.state == 'draft':
+                    if rec.voucher_type == 'sale':
+                        check_payment.action_receive()
+                    if rec.voucher_type == 'purchase':
+                        check_payment.action_issue()
+                    
+        return res
     
     @api.onchange('pay_now')
     def onchange_pay_now(self):
