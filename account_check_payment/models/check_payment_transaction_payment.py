@@ -24,20 +24,58 @@ import datetime
 from openerp import models, fields, api, _
 from openerp.exceptions import UserError, ValidationError
 
-class CheckPaymentTransaction(models.Model):
-    
+class CheckPaymentTransactionPayment(models.Model):
+
     _name = 'check.payment.transaction.payment'
     _description = 'Check Payment'
     _inherits = {'check.payment.transaction': 'check_payment_transaction_id'}
 
-
     check_payment_transaction_id = fields.Many2one('check.payment.transaction', required=True, string='Payment Reference', ondelete='cascade')
     account_payment_id = fields.Many2one('account.payment', readonly=True, string='Payment Reference', ondelete='cascade', index=True, states={'draft': [('readonly', False)]})
+
 
     @api.multi
     def _compute_payment_type(self):
         for rec in self:
             if rec.account_payment_id:
-                rec.payment_type = rec.account_payment_id.payment_type
+                if rec.account_payment_id.payment_type == 'inbound':
+                    rec.payment_type = rec.account_payment_id.payment_type
+                elif rec.account_payment_id.payment_type == 'outbound':
+                    rec.payment_type = rec.account_payment_id.payment_type
             else:
                 rec.payment_type = 'inbound'
+
+    @api.model
+    def create(self, vals):
+        
+        if vals.get('account_payment_id', False):
+            account_payment = self.env['account.payment'].browse(vals['account_payment_id'])
+            vals['journal_id'] = account_payment.journal_id.id
+            vals['partner_id'] = account_payment.partner_id.id
+            vals['currency_id'] = account_payment.currency_id.id
+            if account_payment.payment_type == 'inbound':
+                vals['payment_type'] = 'inbound'
+            elif account_payment.payment_type == 'outbound':
+                vals['payment_type'] = 'outbound'
+        
+        res = super(CheckPaymentTransactionPayment, self).create(vals)
+        
+        return res
+
+    @api.multi
+    def action_receive(self):
+        for rec in self:
+            if rec.state != 'draft':
+                raise UserError(_("Only a check with status draft can be received."))
+
+            rec.name = rec.check_name + ' ' + rec.check_number
+            rec.write({'state': 'received'})
+
+    @api.multi
+    def action_issue(self):
+        for rec in self:
+            if rec.state != 'draft':
+                raise UserError(_("Only a check with status draft can be issued."))
+
+            rec.name = rec.check_name + ' ' + rec.check_number
+            rec.write({'state': 'issued'})

@@ -33,7 +33,8 @@
         'security/ir.model.access.csv',
         'views/account_payment_views.xml',
         'views/check_payment_views.xml',
+        'views/check_payment_transaction_payment_views.xml',
     ],
     'installable': True,
-    'auto_install': True,
+    'auto_install': False,
 }
