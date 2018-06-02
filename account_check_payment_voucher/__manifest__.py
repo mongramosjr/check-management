@@ -32,7 +32,7 @@
         'security/account_check_payment_security.xml',
         'security/ir.model.access.csv',
         'views/voucher_sales_purchase_view.xml',
-        'views/check_payment_transaction_voucher_views_.xml',
+        'views/check_payment_transaction_voucher_views.xml',
     ],
     'installable': True,
     'auto_install': False,
