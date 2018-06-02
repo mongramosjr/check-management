@@ -22,3 +22,4 @@
 
 from . import check_payment_transaction
 from . import account_payment
+from . import check_payment_transaction_payment
